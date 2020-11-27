@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>模型特效</title>
+  <link href="src/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="src/Cesium/Cesium.js"></script>
+  <script src="src/dat.gui.min.js"></script>
+  <script src="src/cesium-tilesetEffect.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body,
+    #viewer-container {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #btn {
+      position: absolute;
+      top: 50px;
+      left: 50px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="viewer-container"></div>
+  <script>
+    // init
+    function initPage() {
+      // 切换自己的token
+      Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlYTQ2ZjdjNS1jM2E0LTQ1M2EtOWM0My1mODMzNzY3YjYzY2YiLCJpZCI6MjkzMjcsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1OTE5NDIzNjB9.RzKlVTVDTQ9r7cqCo-PDydgUh8Frgw0Erul_BVxiS9c';
+      // 初始化
+      let viewer = new Cesium.Viewer("viewer-container", {
+        infoBox: false,
+        shouldAnimate: true,
+        vrButton: true,
+        geocoder: false,
+        homeButton: false,
+        sceneModePicker: false,
+        baseLayerPicker: true,
+        navigationHelpButton: false,
+        animation: false,
+        timeline: false,
+        fullscreenButton: false,
+      });
+      // 特效 默认开启
+      Cesium.TILE_EFFECT_STAYE = true;
+
+      // 片元着色器 默认 可以自定义
+      Cesium.TILE_FS_BODY = ` float stc_pl = fract(czm_frameNumber / 120.0) * 3.14159265 * 2.0;
+                float stc_sd = v_stcVertex.z / 60.0 + sin(stc_pl) * 0.1;
+                gl_FragColor *= vec4(stc_sd, stc_sd, stc_sd, 1.0);
+                float stc_a13 = fract(czm_frameNumber / 360.0);
+                float stc_h = clamp(v_stcVertex.z / 450.0, 0.0, 1.0);
+                stc_a13 = abs(stc_a13 - 0.5) * 2.0;
+                float stc_diff = step(0.005, abs(stc_h - stc_a13));
+                gl_FragColor.rgb += gl_FragColor.rgb * (1.0 - stc_diff);`;
+      // 加载3dtileset
+      let tilesets = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
+        url: '/haidian/tileset.json' //切片url
+      }))
+      tilesets.readyPromise.then(function (tileset) {
+        tileset.style = new Cesium.Cesium3DTileStyle({
+          color: {
+            conditions: [
+              ["true", "color('cyan')"]
+            ]
+          }
+        });
+        viewer.flyTo(tileset)
+      })
+    }
+
+    // load
+    window.onload = function () {
+      initPage()
+    }
+  </script>
+</body>
+
+</html>
