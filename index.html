@@ -52,12 +52,12 @@
         timeline: false,
         fullscreenButton: false,
       });
-      // 特效 默认开启
+      // 特效 默认为开启
       Cesium.TILE_EFFECT_STAYE = true;
 
-      // 片元着色器 默认 可以自定义
+      // 自定义着色器  默认有片元着色器
       Cesium.TILE_FS_BODY = ` float stc_pl = fract(czm_frameNumber / 120.0) * 3.14159265 * 2.0;
-                float stc_sd = v_stcVertex.z / 60.0 + sin(stc_pl) * 0.1;
+                float stc_sd = v_stcVertex.z / 320.0 + sin(stc_pl) * 0.1;
                 gl_FragColor *= vec4(stc_sd, stc_sd, stc_sd, 1.0);
                 float stc_a13 = fract(czm_frameNumber / 360.0);
                 float stc_h = clamp(v_stcVertex.z / 450.0, 0.0, 1.0);
@@ -66,7 +66,7 @@
                 gl_FragColor.rgb += gl_FragColor.rgb * (1.0 - stc_diff);`;
       // 加载3dtileset
       let tilesets = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
-        url: '/haidian/tileset.json' //切片url
+        url: 'https://lab.earthsdk.com/model/702aa950d03c11e99f7ddd77cbe22fea/tileset.json' //切片url
       }))
       tilesets.readyPromise.then(function (tileset) {
         tileset.style = new Cesium.Cesium3DTileStyle({
