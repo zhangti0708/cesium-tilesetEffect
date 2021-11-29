@@ -19,7 +19,7 @@
 
 ```
       // 特效 默认开启
-      Cesium.TILE_EFFECT_STAYE = true;
+      Cesium.TILE_EFFECT_STATE = true;
  
       // 片元着色器 默认 可以自定义
       Cesium.TILE_FS_BODY = ` float stc_pl = fract(czm_frameNumber / 120.0) * 3.14159265 *         
